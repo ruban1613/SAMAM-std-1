@@ -1,0 +1,70 @@
+{
+  "entities": {
+    "StudentProfile": {
+      "title": "StudentProfile",
+      "description": "Student profile with progress data",
+      "type": "object",
+      "properties": {
+        "name": { "type": "string" },
+        "avatar": { "type": "string" },
+        "progress": { "type": "object" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["name", "avatar", "progress", "createdAt"]
+    },
+    "AdminProfile": {
+      "title": "AdminProfile",
+      "description": "Administrator profile",
+      "type": "object",
+      "properties": {
+        "email": { "type": "string" },
+        "name": { "type": "string" },
+        "createdAt": { "type": "string" }
+      },
+      "required": ["email", "name", "createdAt"]
+    },
+    "AdminConfig": {
+      "title": "AdminConfig",
+      "description": "Global admin configuration status",
+      "type": "object",
+      "properties": {
+        "hasAdmin": { "type": "boolean" },
+        "adminUid": { "type": "string" },
+        "setupCompletedAt": { "type": "string" }
+      },
+      "required": ["hasAdmin", "adminUid", "setupCompletedAt"]
+    },
+    "ActivityLog": {
+      "title": "ActivityLog",
+      "description": "Audit log for tracking user actions and data access on the website",
+      "type": "object",
+      "properties": {
+        "userId": { "type": "string" },
+        "userEmail": { "type": "string" },
+        "userName": { "type": "string" },
+        "action": { "type": "string" },
+        "details": { "type": "string" },
+        "timestamp": { "type": "object" }
+      },
+      "required": ["userId", "userEmail", "userName", "action", "details", "timestamp"]
+    }
+  },
+  "firestore": {
+    "/students/{studentId}": {
+      "schema": "StudentProfile",
+      "description": "User student profiles and learning progress stats"
+    },
+    "/admins/{adminId}": {
+      "schema": "AdminProfile",
+      "description": "Information about the system administrators"
+    },
+    "/adminConfig/{configId}": {
+      "schema": "AdminConfig",
+      "description": "Global settings for admin registration lock"
+    },
+    "/activityLogs/{logId}": {
+      "schema": "ActivityLog",
+      "description": "Security audit logs of data accesses and interactive features used on the site"
+    }
+  }
+}

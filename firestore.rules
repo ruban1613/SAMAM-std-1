@@ -1,0 +1,70 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    
+    // Global Safety Net (Pillar 1)
+    match /{document=**} {
+      allow read, write: if false;
+    }
+
+    // Common helper primitives
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && exists(/databases/$(database)/documents/admins/$(request.auth.uid));
+    }
+
+    function isValidId(id) {
+      return id is string && id.size() <= 128 && id.matches('^[a-zA-Z0-9_\\-]+$');
+    }
+
+    // 1. Students collection - accessible to authenticated users
+    match /students/{studentId} {
+      allow read: if isSignedIn() || isAdmin();
+      allow create, update: if (isSignedIn() && isValidId(studentId)) || isAdmin();
+      allow delete: if isAdmin();
+    }
+
+    // 2. Admins collection - handles the single admin slot
+    match /admins/{adminId} {
+      // Admins can read their own profile, or verified administrators can read all admin profiles
+      allow read: if (isSignedIn() && request.auth.uid == adminId) || isAdmin();
+      
+      // Can only register as an admin if the global admin setup is not yet completed
+      allow create: if (
+        isSignedIn() && 
+        request.auth.uid == adminId && 
+        !exists(/databases/$(database)/documents/adminConfig/status)
+      );
+      
+      allow update, delete: if isAdmin() && request.auth.uid == adminId;
+    }
+
+    // 3. Admin Config collection - global status that locks the setup slot
+    match /adminConfig/{configId} {
+      allow read: if true; // anyone can read config status to check if setup is complete
+      
+      // Only allowed to create the status document once when it does not yet exist
+      allow create: if (
+        isSignedIn() && 
+        configId == 'status' && 
+        !exists(/databases/$(database)/documents/adminConfig/status)
+      );
+      
+      allow update, delete: if isAdmin();
+    }
+
+    // 4. Activity Logs collection - logs user actions
+    match /activityLogs/{logId} {
+      // Anyone can write activity logs (to record logins, signups, gameplay, and errors)
+      allow create: if true;
+      
+      // Only registered admins can query/view activity logs
+      allow read: if isAdmin();
+      
+      allow update, delete: if false;
+    }
+  }
+}

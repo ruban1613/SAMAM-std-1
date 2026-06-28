@@ -1,0 +1,6 @@
+{
+  "name": "SAMAM Standard 1 Interactive E-Book",
+  "description": "An interactive, play-led educational eBook for Standard 1 students featuring Mathematics, Language, Discovery (EVS), Art, and Life Skills with text-to-speech, educational games, and AI companions.",
+  "requestFramePermissions": [],
+  "majorCapabilities": ["MAJOR_CAPABILITY_SERVER_SIDE_GEMINI_API"]
+}
