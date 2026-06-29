@@ -1,7 +1,7 @@
 import { motion } from "framer-motion";
 import { Sparkles, ArrowRight, ShieldAlert, CheckCircle, Gamepad2, Compass, Award, Star, BookOpen, User } from "lucide-react";
 import { playClickSound, playPopSound } from "../utils/audio";
-import { kidSkillsData } from "../skills/skillData";
+import { kidSkillsData } from "../competencies/CompetencyData";
 
 interface SaaSLandingPageProps {
   onStartQuest: () => void;
